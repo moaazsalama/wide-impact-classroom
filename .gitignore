@@ -1,0 +1,6 @@
+# OS / editor
+.DS_Store
+
+# Local environment files (secrets) — each package also ignores its own
+.env
+.env.local

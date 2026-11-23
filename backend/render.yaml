@@ -1,0 +1,37 @@
+# Render Blueprint (free tier) + Neon Postgres (free tier).
+# 1. Create a Neon project, copy its pooled connection string (…?sslmode=require).
+# 2. In Render: New > Blueprint, point at this repo; fill the `sync: false` vars when prompted.
+# 3. Optional reviewer accounts: set ENABLE_DEV_LOGIN=true, then run `npm run seed` once
+#    locally with DATABASE_URL pointing at Neon (prints the sample classroom's join code).
+# Note: free Render services sleep after ~15 min idle; the first request takes ~30–50 s.
+services:
+  - type: web
+    name: wide-impact-classroom-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_SSL
+        value: "true"
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_ACCESS_TTL
+        value: 15m
+      - key: REFRESH_TOKEN_TTL_DAYS
+        value: "30"
+      - key: GOOGLE_CLIENT_IDS
+        sync: false
+      # Enabled for the assessment so reviewers can use the seeded test accounts.
+      # Set to "false" for a real production deployment.
+      - key: ENABLE_DEV_LOGIN
+        value: "true"
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: LOG_LEVEL
+        value: info
