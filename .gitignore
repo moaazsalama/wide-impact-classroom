@@ -4,3 +4,6 @@
 # Local environment files (secrets) — each package also ignores its own
 .env
 .env.local
+
+# Built binaries (too large for git; attach to a GitHub release instead)
+release/
