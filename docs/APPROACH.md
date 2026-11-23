@@ -4,7 +4,7 @@
 
 1. **Read the brief for the core flows** — teacher signs in → creates classroom → shares QR / code → student joins — and for what is graded (architecture, API/DB design, auth & security, error handling, working app).
 2. **Resolved the open questions up front** and wrote them down as assumptions (section 5), most importantly: *how does a student identify themself?*
-3. **Contract first.** Before writing code I wrote [`API.md`](API.md): endpoints, payloads, the error format and error codes, auth rules, and the QR payload format. The backend and the mobile app were then built in parallel against that single contract, which kept the two halves consistent and made integration straightforward.
+3. **Contract first.** Before any code was written, the API contract [`API.md`](API.md) was drafted with the AI assistant: endpoints, payloads, the error format and error codes, auth rules, and the QR payload format. The backend and the mobile app were then built in parallel by AI agents against that single contract, which kept the two halves consistent and made integration straightforward (see [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md)).
 4. **Backend with tests**, then **mobile app**, then **integration on an Android emulator**, then **docs and APK**.
 
 ## 2. Architecture
@@ -66,7 +66,7 @@
 
 ## 4. Challenges and how I resolved them
 
-- **Testing Google Sign-In without reviewers' Google accounts.** Reviewers can't log in as my Google user, and a Google OAuth app in testing mode only allows listed test users. I added a **dev-login** endpoint behind `ENABLE_DEV_LOGIN` plus seeded test accounts, shown in the app only when `EXPO_PUBLIC_ENABLE_DEV_LOGIN=true`. The real Google flow remains the primary path.
+- **Testing Google Sign-In without reviewers' Google accounts.** Reviewers can't log in as my Google user, and a Google OAuth app in testing mode only allows listed test users. The solution is a **dev-login** endpoint behind `ENABLE_DEV_LOGIN` plus seeded test accounts, shown in the app only when `EXPO_PUBLIC_ENABLE_DEV_LOGIN=true`. The real Google flow remains the primary path.
 - **Refresh races.** Several screens fire requests at once; when the access token expires they'd all refresh simultaneously, and with rotation + reuse detection that would log the user out. Solved with a single-flight refresh promise in the axios interceptor.
 - **Identical route names in two groups** (`(teacher)/classrooms/[id]` and `(student)/classrooms/[id]`) are ambiguous for expo-router; navigation always uses group-qualified paths.
 - **Deep link before sign-in.** If a signed-out user opens a join link, the code is kept as a pending join and resumed after sign-in/role selection.
